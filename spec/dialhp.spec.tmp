@@ -1,0 +1,53 @@
+Name: dialhp		
+Version: @VERSION@
+Release: @RELEASE@%{dist}
+Summary: YAMU dialhp
+
+Group: Applications/Internet
+License: GPL
+URL: http://www.yamutech.com
+Source0: dialhp-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
+
+%description
+YAMU dialhp
+
+%prep
+%setup -q -n dialhp-%{version}
+
+%build
+#make %{?_smp_mflags}
+make
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}/%{_bindir}
+mkdir -p %{buildroot}/etc/dialhp
+mkdir -p %{buildroot}/var/log/dialhp
+mkdir -p %{buildroot}/etc/init.d
+touch %{buildroot}/var/log/dialhp/dialhp.log
+
+install -m 755 dialhp %{buildroot}/%{_bindir}/dialhp
+install -m 755 config/dialhp.json  %{buildroot}/etc/dialhp
+install -m 755 config/dialhpd  %{buildroot}/etc/init.d/
+
+%clean
+rm -rf %{buildroot}
+
+%post
+chkconfig --add dialhpd
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/dialhp
+/etc/dialhp
+%config/etc/dialhp/dialhp.json 
+/var/log/dialhp 
+/var/log/dialhp/dialhp.log 
+/etc/init.d/dialhpd
+
+%preun
+chkconfig --del dialhpd
+
+%changelog
+

@@ -1,0 +1,25 @@
+{
+  "views":
+    [
+      {
+        "desc":"所有viewid无需配置",
+        "viewid":"",
+        "nameserver":"8.8.8.8",
+        "bindaddres":"127.0.0.1"
+      },
+      {
+        "desc":"福建电信",
+        "viewid":"",
+        "nameserver":"114.114.114.114",
+        "bindaddres":"10.4.0.24"
+      }
+    ],
+  "server":{
+    "node":"hijack",
+    "device":""
+  },
+  "download":{
+    "host":"192.168.6.160",
+    "port":53
+  }
+}

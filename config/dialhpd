@@ -1,0 +1,68 @@
+#! /bin/bash
+#
+# dnsys		start/stop manager
+#
+# Authors: yamu, 2016, <yamu@yamutech.com>
+#
+# chkconfig: 345 13 87
+# description: dnsys start/stop manager
+#
+# processname: /usr/bin/dialhp
+# pidfile: /var/run/dialhp.pid
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+RETVAR=0
+PROG="dialhp"
+LOCK_FILE=/var/lock/subsys/dialhp
+pidfile=/var/run/dialhp.pid
+YRDNS_BIN=/usr/bin/dialhp
+
+case "$1" in
+	start)
+		echo "Starting dialhp: "
+			daemon --pidfile=$pidfile ${YRDNS_BIN} -s
+			RETVAR=$?
+		if [ $RETVAR -ne 0 ]
+		then
+			exit 6
+		fi
+		
+		echo "$(pgrep dialhp|head -1)" > $pidfile
+		touch ${LOCK_FILE}
+		;;
+
+	stop)
+		echo -n $"Shutting down $PROG: "
+		if [ -f $pidfile ]
+		then
+			killall -9 dialhp
+			RETVAR=$?
+			rm -f $pidfile
+		else
+			killall -9 dialhp
+			RETVAR=$?
+		fi
+		[ $RETVAR -ne 0 ] && exit 6
+		rm -f $LOCK_FILE
+		sleep 1
+		;;
+
+	restart|reload|force-reload)
+		$0 stop
+		$0 start
+		RETVAR=$?
+		;;
+
+	status)
+		status $YRDNS_BIN
+		RETVAR=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|reload|force-reload|status}"
+		exit 2
+		;;
+esac
+
+exit $RETVAR
